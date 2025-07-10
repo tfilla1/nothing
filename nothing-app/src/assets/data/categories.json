@@ -1,0 +1,27 @@
+[
+  {
+    "key": "home",
+    "value": "Home",
+    "description": "Home"
+  },
+  {
+    "key": "work",
+    "value": "Work",
+    "description": "Work"
+  },
+  {
+    "key": "personal",
+    "value": "Personal",
+    "description": "Personal"
+  },
+  {
+    "key": "shopping",
+    "value": "Shopping",
+    "description": "Shopping"
+  },
+  {
+    "key": "other",
+    "value": "Other",
+    "description": "Other"
+  }
+]

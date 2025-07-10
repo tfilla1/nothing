@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "task": "drink water",
+    "description": "",
+    "done": false,
+    "priority": 1,
+    "category": "home"
+  },
+  {
+    "id": 2,
+    "task": "eat breakfast",
+    "description": "",
+    "done": false,
+    "priority": 2,
+    "category": "home"
+  },
+  {
+    "id": 3,
+    "task": "walk the dog",
+    "description": "",
+    "done": false,
+    "priority": 3,
+    "category": "home"
+  },
+  {
+    "id": 4,
+    "task": "go to work",
+    "description": "",
+    "done": false,
+    "priority": 4,
+    "category": "home"
+  },
+  {
+    "id": 5,
+    "task": "go to the gym",
+    "done": false,
+    "priority": 5,
+    "category": "home"
+  }
+]
