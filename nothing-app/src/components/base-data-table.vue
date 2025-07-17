@@ -7,7 +7,7 @@
  * ability to add/edit records
  */
 
-import { ref, computed, reactive } from "vue";
+import { ref } from "vue";
 
 const props = defineProps<{
   headers: any[];
@@ -37,12 +37,12 @@ const toggleSettings = () => {
 <template>
   <v-card :title="title" :subtitle="subtitle">
     <template #append>
-      <v-btn variant="text" icon="mdi-cog" @click="toggleSettings"></v-btn>
-      <v-btn variant="text" icon="mdi-filter" @click="toggleFilters"></v-btn>
+      <v-btn variant="text" icon="$settings" @click="toggleSettings"></v-btn>
+      <v-btn variant="text" icon="$filter" @click="toggleFilters"></v-btn>
       <v-btn
         variant="elevated"
         class="bg-primary"
-        icon="mdi-plus"
+        icon="$plus"
         @click="toggleEdit"
       ></v-btn>
     </template>
@@ -53,7 +53,7 @@ const toggleSettings = () => {
             v-model="search"
             variant="outlined"
             label="search"
-            prepend-inner-icon="mdi-magnify"
+            prepend-inner-icon="$search"
             class="border-r-2"
           >
           </v-text-field>
@@ -77,7 +77,7 @@ const toggleSettings = () => {
   <v-dialog v-model="showEdit" max-width="420">
     <v-card title="edit">
       <template #append>
-        <v-btn @click="toggleEdit" icon="mdi-close" variant="text"></v-btn>
+        <v-btn @click="toggleEdit" icon="$close" variant="text"></v-btn>
       </template>
       <template #text> asdf </template>
     </v-card>
@@ -85,7 +85,7 @@ const toggleSettings = () => {
   <v-dialog v-model="showSettings" max-width="420">
     <v-card title="settings">
       <template #append>
-        <v-btn @click="toggleSettings" icon="mdi-close" variant="text"></v-btn>
+        <v-btn @click="toggleSettings" icon="$close" variant="text"></v-btn>
       </template>
       <template #text> asdf </template>
     </v-card>
@@ -93,7 +93,7 @@ const toggleSettings = () => {
   <v-dialog v-model="showFilters" max-width="420">
     <v-card title="filters">
       <template #append>
-        <v-btn @click="toggleFilters" icon="mdi-close" variant="text"></v-btn>
+        <v-btn @click="toggleFilters" icon="$close" variant="text"></v-btn>
       </template>
       <template #text> asdf </template>
     </v-card>

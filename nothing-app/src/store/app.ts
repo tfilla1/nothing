@@ -1,9 +1,11 @@
 // Utilities
 import { defineStore } from 'pinia'
-import {Item} from '../classes/Item'
+// nothing-app/src/store/app.ts
+
+import type { Item } from '../types/Item'
 export const useAppStore = defineStore('app', {
   state: () => ({
     //
-    items: [] as Item[]
+    items: Array<Item>
   }),
 })

@@ -10,6 +10,7 @@ declare module 'vue' {
     BaseCardDrawer: typeof import('./src/components/base-card-drawer.vue')['default']
     BaseDataTable: typeof import('./src/components/base-data-table.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    LightSwitch: typeof import('./src/components/light-switch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
