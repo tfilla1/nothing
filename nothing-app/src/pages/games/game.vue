@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import useBrickBreaker, {
   BallType,
-  BrickType,
   PaddleType,
 } from "@/composables/useBrickBreaker";
 import { AUTO, Game } from "phaser";
@@ -21,9 +20,11 @@ const {
   balls,
   bricks,
   paddles,
+  size,
   addBall,
   addBrick,
   addPaddle,
+  generateBricks,
   reflectBallOffPaddle,
   updatePaddle,
 } = useBrickBreaker();
@@ -32,14 +33,20 @@ const {
 defineProps<{ modelValue: string; title: string }>();
 
 const ballData: BallType[] = games.brickbreaker.balls;
-const brickData: BrickType[] = games.brickbreaker.bricksLevel2;
+// const brickData: Brick[] = games.brickbreaker.bricksLevel2;
 const paddleData: PaddleType[] = games.brickbreaker.paddles;
 
+function init() {
+  // TODO generate bricks
+  // TODO create bricks
+}
 onMounted((): void => {
+  init();
+
   game = new Game({
     type: AUTO,
-    width: 420,
-    height: 520,
+    width: size.canvas,
+    height: size.canvas,
     parent: gameContainer.value,
     physics: {
       default: "arcade",
@@ -69,7 +76,8 @@ onMounted((): void => {
           addBall.call(this, ball, index);
         });
 
-        brickData.forEach((brick, index) => {
+        const generatedBricks = generateBricks(20, size.canvas);
+        generatedBricks.forEach((brick, index) => {
           addBrick.call(this, brick, index);
         });
 

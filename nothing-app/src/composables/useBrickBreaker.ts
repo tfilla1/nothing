@@ -1,3 +1,5 @@
+import useRandom from "./useRandom";
+
 export interface GameBallType {
   circle: Phaser.GameObjects.Arc;
   body?: Phaser.Physics.Arcade.Body;
@@ -24,10 +26,12 @@ export interface BallType {
   y: number;
   size: number;
 }
-export interface BrickType {
-  x: number;
-  y: number;
-  size: number;
+export interface Brick {
+  x: number
+  y: number
+  size: number
+  hitsLeft?: number
+  text?: string
 }
 export interface PaddleType {
   x: number;
@@ -51,6 +55,14 @@ export default function useBrickBreaker() {
     ball: 0xaa00ff,
     brick: 0xff00aa,
     paddle: 0x00aaff
+  }
+  const hits = {
+    brick: 12
+  }
+  const size = {
+    brick: 25,
+    canvas: 500,
+    paddle: { width: 50, height: 200 },
   }
   const speed = {
     ball: 200,
@@ -76,7 +88,7 @@ export default function useBrickBreaker() {
     balls.push({ circle, body, baseY: ball.y, offset: index * 0.2 });
   }
 
-  function addBrick(this: Phaser.Scene, brick: BrickType, index: number) {
+  function addBrick(this: Phaser.Scene, brick: Brick, index: number) {
     const rect = this.add.rectangle(
       brick.x,
       brick.y,
@@ -119,6 +131,19 @@ export default function useBrickBreaker() {
       offset: index * 0.2,
     });
   }
+
+  function generateBricks(amount: number, boundary: number): Brick[] {
+    return Array.from(
+      { length: amount },
+      () => ({
+        x: useRandom(boundary, 50),
+        y: useRandom(boundary),
+        size: size.brick,
+        hitsLeft: hits.brick
+      })
+    )
+  }
+
   function reflectBallOffPaddle(ball: GameBallType, paddle: GamePaddleType) {
     const ballBody = ball.body!;
 
@@ -157,9 +182,11 @@ export default function useBrickBreaker() {
     balls,
     bricks,
     paddles,
+    size,
     addBall,
     addBrick,
     addPaddle,
+    generateBricks,
     reflectBallOffPaddle,
     updatePaddle,
   }
