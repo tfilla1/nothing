@@ -30,6 +30,7 @@ import {
   mdiController,
   mdiControllerClassic,
   mdiControllerClassicOutline,
+  mdiDotsCircle,
   mdiFacebookWorkplace,
   mdiFilter,
   mdiFlaskEmptyOutline,
@@ -38,6 +39,7 @@ import {
   mdiLightbulbNight,
   mdiLightbulbNightOutline,
   mdiMagnify,
+  mdiMapMarker,
   mdiPipeDisconnected,
   mdiShopping,
   mdiSnowflakeThermometer,
@@ -98,6 +100,9 @@ export default createVuetify({
       games: mdiController,
       gamesClassic: mdiControllerClassic,
       gamesClassicOutline: mdiControllerClassicOutline,
+
+      locations: mdiMapMarker,
+      grabber: mdiDotsCircle
 
     },
     sets: {

@@ -40,13 +40,11 @@ const items = reactive([
 </script>
 
 <template>
-  <v-container class="mx-auto">
-    <base-data-table
-      :headers="headers"
-      :items="items"
-      title="Users"
-      subtitle="use this page to view users"
-    >
-    </base-data-table>
-  </v-container>
+  <base-data-table
+    :headers="headers"
+    :items="items"
+    title="Users"
+    subtitle="use this page to view users"
+  >
+  </base-data-table>
 </template>
