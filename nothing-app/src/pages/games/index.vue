@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { computed, Ref, ref } from "vue";
+import useEventBus, { EVENT_KEYS } from "@/composables/useEventBus";
+import useFloatingSearch from "@/composables/useFloatingSearch";
+import { computed, onBeforeUnmount, onMounted, Ref, ref } from "vue";
 import game from "./game.vue";
 
 interface CardType {
@@ -20,29 +22,61 @@ interface ThingType {
   props: any;
 }
 
-const selectedGame: Ref<ThingType | undefined> = ref(undefined);
+const { hide, show } = useFloatingSearch();
 
-const gameList = computed(() => [
-  {
-    modelValue: "brickbreaker",
-    title: "brickbreaker",
-    prependIcon: "$arrowLeft",
-    // onClick: () => (selectedGame.value = undefined),
-    props: {
-      appendIcon: "$arrowRight",
-      onClick: (): any =>
-        (selectedGame.value = gameList.value.find(
-          (game) => game.modelValue === "brickbreaker"
-        )),
+const selectedGame: Ref<ThingType | undefined> = ref(undefined);
+const search = ref("");
+const gameList = computed(() =>
+  [
+    {
+      modelValue: "brickbreaker",
+      title: "brickbreaker",
+      prependIcon: "$arrowLeft",
+      // onClick: () => (selectedGame.value = undefined),
+      props: {
+        appendIcon: "$arrowRight",
+        onClick: (): any =>
+          (selectedGame.value = gameList.value.find(
+            (game) => game.modelValue === "brickbreaker"
+          )),
+      },
     },
-  },
-]);
+    {
+      modelValue: "eights",
+      title: "eights",
+      prependIcon: "$arrowLeft",
+      // onClick: () => (selectedGame.value = undefined),
+      props: {
+        appendIcon: "$arrowRight",
+        onClick: (): any =>
+          (selectedGame.value = gameList.value.find(
+            (game) => game.modelValue === "eights"
+          )),
+      },
+    },
+  ].filter((game) => game.modelValue.includes(search.value))
+);
 
 const gameCard: Ref<GameType> = ref({
   title: "welcome to games",
   subtitle: "here are some games",
   prependIcon: "$games",
   modelValue: "welcome",
+});
+
+const bus = useEventBus();
+const handler = (query: string) => {
+  console.log({ query });
+  search.value = query;
+};
+
+onMounted(() => {
+  show();
+  bus.on(EVENT_KEYS.setSearch, handler);
+});
+onBeforeUnmount(() => {
+  hide();
+  bus.off(EVENT_KEYS.setSearch, handler);
 });
 </script>
 <template>
