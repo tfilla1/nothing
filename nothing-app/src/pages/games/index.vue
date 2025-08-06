@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import useEventBus, { EVENT_KEYS } from "@/composables/useEventBus";
 import useFloatingSearch from "@/composables/useFloatingSearch";
+import useGames from "@/composables/useGames";
 import { computed, onBeforeUnmount, onMounted, Ref, ref } from "vue";
 import game from "./game.vue";
 
@@ -9,9 +10,9 @@ interface CardType {
   title: string;
   subtitle: string;
   prependIcon: string;
-  props?: any;
+  // props?: any;
 }
-interface GameType extends CardType {}
+// interface GameType extends CardType {}
 
 // const games = ref(["brickbreaker", "eights", "war", "etc"]);
 
@@ -23,55 +24,34 @@ interface ThingType {
 }
 
 const { hide, show } = useFloatingSearch();
+const { chooseGame, getGameList, selectedGame } = useGames();
 
-const selectedGame: Ref<ThingType | undefined> = ref(undefined);
+const pendingChanges = ref(1);
+const loading = computed(() => pendingChanges.value > 0);
+
+// const selectedGame: Ref<ThingType | undefined> = ref(undefined);
 const search = ref("");
+
 const gameList = computed(() =>
-  [
-    {
-      modelValue: "brickbreaker",
-      title: "brickbreaker",
-      prependIcon: "$arrowLeft",
-      // onClick: () => (selectedGame.value = undefined),
-      props: {
-        appendIcon: "$arrowRight",
-        onClick: (): any =>
-          (selectedGame.value = gameList.value.find(
-            (game) => game.modelValue === "brickbreaker"
-          )),
-      },
-    },
-    {
-      modelValue: "eights",
-      title: "eights",
-      prependIcon: "$arrowLeft",
-      // onClick: () => (selectedGame.value = undefined),
-      props: {
-        appendIcon: "$arrowRight",
-        onClick: (): any =>
-          (selectedGame.value = gameList.value.find(
-            (game) => game.modelValue === "eights"
-          )),
-      },
-    },
-  ].filter((game) => game.modelValue.includes(search.value))
+  getGameList().filter((game) => game.modelValue.includes(search.value))
 );
 
-const gameCard: Ref<GameType> = ref({
+const gameCard: Ref<CardType> = ref({
   title: "welcome to games",
   subtitle: "here are some games",
   prependIcon: "$games",
   modelValue: "welcome",
+  width: 500,
+  height: 500,
 });
 
 const bus = useEventBus();
-const handler = (query: string) => {
-  console.log({ query });
-  search.value = query;
-};
+const handler = (query: string) => (search.value = query);
 
 onMounted(() => {
   show();
+
+  // listener for search:query - hand off to searchHandler
   bus.on(EVENT_KEYS.setSearch, handler);
 });
 onBeforeUnmount(() => {
@@ -80,8 +60,23 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <v-card v-if="!selectedGame" v-bind="gameCard">
-    <v-list :items="gameList"></v-list>
+  <!-- {{ selectedGame }} -->
+  <v-card
+    v-if="!selectedGame"
+    v-bind="gameCard"
+    item-props
+    :prepend-icon="gameCard.prependIcon"
+  >
+    <v-list>
+      <v-list-item
+        v-for="game in gameList"
+        :key="game.modelValue"
+        @click="chooseGame(game.modelValue)"
+        append-icon="$arrowRight"
+      >
+        {{ game.title }}
+      </v-list-item>
+    </v-list>
   </v-card>
 
   <v-card v-else v-bind="selectedGame">
@@ -93,8 +88,7 @@ onBeforeUnmount(() => {
       ></v-btn>
     </template>
     <Suspense>
-      <div class="d-flex">
-        <v-spacer></v-spacer>
+      <div class="d-flex flex-fill">
         <game v-bind="selectedGame"></game>
       </div>
       <template #fallback>

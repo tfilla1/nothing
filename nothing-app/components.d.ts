@@ -11,6 +11,7 @@ declare module 'vue' {
     BaseDataTable: typeof import('./src/components/base-data-table.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     LightSwitch: typeof import('./src/components/light-switch.vue')['default']
+    QuickSwitch: typeof import('./src/components/quick-switch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

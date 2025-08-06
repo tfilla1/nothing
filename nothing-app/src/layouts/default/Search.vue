@@ -3,7 +3,6 @@ import useEventBus, { EVENT_KEYS } from "@/composables/useEventBus";
 import useLocalStorage, { STORAGE_KEYS } from "@/composables/useLocalStorage";
 import {
   computed,
-  ComputedRef,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -16,28 +15,11 @@ const local = useLocalStorage();
 
 const pendingChanges = ref(0);
 const loading = computed(() => pendingChanges.value > 0);
-interface CardType {
-  title: string;
-  subtitle: string;
-  icon: string;
-  modelValue: boolean;
-  loading: boolean;
-}
-interface SearchType extends CardType {}
-const searchCard: ComputedRef<SearchType> = computed(
-  () =>
-    ({
-      loading: loading.value,
-      title: "Search",
-      subtitle: "have a search or a gander",
-      modelValue: true,
-    } as SearchType)
-);
 
 const search = reactive({
   position: {
-    x: 300,
-    y: 300,
+    x: window.innerWidth * 0.2,
+    y: window.innerHeight * 0.1,
   },
   offset: {
     x: 0,
@@ -47,12 +29,14 @@ const search = reactive({
   query: "",
 });
 
-function grabStart(event: any) {
+function grabStart(event: MouseEvent | TouchEvent) {
   event.preventDefault();
   search.dragging = true;
 
-  const clientX = event.clientX ?? event.touches[0].clientX;
-  const clientY = event.clientY ?? event.touches[0].clientY;
+  const clientX =
+    "clientX" in event ? event.clientX : event.touches[0].clientX ?? 0;
+  const clientY =
+    "clientY" in event ? event.clientY : event.touches[0].clientY ?? 0;
   search.offset.x = clientX - search.position.x;
   search.offset.y = clientY - search.position.y;
 }
@@ -68,6 +52,7 @@ function grabMove(event: MouseEvent | TouchEvent) {
 }
 
 function grabEnd() {
+  console.log("grabbing");
   if (!search.dragging) return;
   search.dragging = false;
   // save position
@@ -123,6 +108,7 @@ onBeforeUnmount(() => {
       prepend-inner-icon="$search"
       variant="solo"
       width="200"
+      :loading="loading"
       flat
       hide-details
       single-line
@@ -139,6 +125,7 @@ onBeforeUnmount(() => {
         icon="$grabber"
         @mousedown="grabStart"
         @touchstart="grabStart"
+        aria-label="drag to move search"
       ></v-btn>
     </template>
   </v-toolbar>

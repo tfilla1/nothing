@@ -15,6 +15,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import {
   mdiAccount,
   mdiAccountGroup,
+  mdiAccountGroupOutline,
   mdiAirplane,
   mdiArrowDown,
   mdiArrowLeft,
@@ -25,6 +26,7 @@ import {
   mdiCheckboxBlankOutline,
   mdiCheckboxMarked,
   mdiClipboardList,
+  mdiCloud,
   mdiCog,
   mdiConnection,
   mdiController,
@@ -35,11 +37,19 @@ import {
   mdiFilter,
   mdiFlaskEmptyOutline,
   mdiGithub,
+  mdiGroup,
   mdiHome,
   mdiLightbulbNight,
   mdiLightbulbNightOutline,
+  mdiListBox,
+  mdiListBoxOutline,
   mdiMagnify,
   mdiMapMarker,
+  mdiMessage,
+  mdiMore,
+  mdiMushroom,
+  mdiMushroomOff,
+  mdiMusic,
   mdiPipeDisconnected,
   mdiShopping,
   mdiSnowflakeThermometer,
@@ -84,6 +94,9 @@ export default createVuetify({
       chat: mdiChat,
       connect: mdiConnection,
       disconnect: mdiPipeDisconnected,
+      group: mdiGroup,
+      groupOutline: mdiAccountGroupOutline,
+      message: mdiMessage,
       send: mdiAirplane,
       room: mdiBroom,
 
@@ -96,10 +109,21 @@ export default createVuetify({
       arrowUp: mdiArrowUp,
       arrowDown: mdiArrowDown,
 
+      cloud: mdiCloud,
+      list: mdiListBox,
+      listOutline: mdiListBoxOutline,
+
       //games
       games: mdiController,
       gamesClassic: mdiControllerClassic,
       gamesClassicOutline: mdiControllerClassicOutline,
+
+      // music and art
+      music: mdiMusic,
+      mushroom: mdiMushroom,
+      mushroomOff: mdiMushroomOff,
+      more: mdiMore,
+
 
       locations: mdiMapMarker,
       grabber: mdiDotsCircle

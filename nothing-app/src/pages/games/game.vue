@@ -1,11 +1,18 @@
 <script lang="ts" setup>
 import useBrickBreaker, {
   BallType,
+  Brick,
   PaddleType,
 } from "@/composables/useBrickBreaker";
+import { GameType } from "@/composables/useGames";
+import useLocalStorage, { STORAGE_KEYS } from "@/composables/useLocalStorage";
 import { AUTO, Game } from "phaser";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import games from "../../assets/games.json";
+import Search from "../../layouts/default/Search.vue";
+
+const pendingChanges = ref(0);
+const loading = computed(() => pendingChanges.value > 0);
 
 const WOBBLE_SPEED = 0.005;
 const WOBBLE_INTENSITY = 2;
@@ -26,11 +33,13 @@ const {
   addPaddle,
   generateBricks,
   reflectBallOffPaddle,
+  resetLevel,
   updatePaddle,
 } = useBrickBreaker();
+const { getItem, setItem } = useLocalStorage();
 
 // modelValue >> v-model = breaker | eights | war
-defineProps<{ modelValue: string; title: string }>();
+const things = defineProps<{ modelValue: GameType; title: string }>();
 
 const ballData: BallType[] = games.brickbreaker.balls;
 // const brickData: Brick[] = games.brickbreaker.bricksLevel2;
@@ -40,10 +49,63 @@ function init() {
   // TODO generate bricks
   // TODO create bricks
 }
-onMounted((): void => {
-  init();
 
-  game = new Game({
+// TODO onWatch: savePreviousLevel
+interface Level {
+  key: string;
+  level: number;
+  bricks: Brick[];
+}
+
+const generateLevel = (scene: Phaser.Scene, level: number) => {
+  currentGeneratedLevel.value = {
+    level,
+    key: `Level_${level}`,
+    bricks: generateBricks(20, size.canvas),
+  };
+
+  currentGeneratedLevel.value.bricks.forEach((brick, index) => {
+    addBrick.call(scene, brick, index);
+  });
+};
+// const generatedLevel = computed(
+//   (): Level => ({
+//     key: `Level_${currentLevel.value}`,
+//     bricks: generateBricks(20, size.canvas),
+//   })
+// );
+
+const currentGeneratedLevel = ref({} as Level);
+const currentLevel = ref(0);
+
+const generatedLevels = ref([] as Level[]);
+// const currentLevel = ref(0);
+watch(
+  () => currentGeneratedLevel.value,
+  (val, old) => {
+    if (val !== old) {
+      generatedLevels.value.push(val);
+
+      setItem(STORAGE_KEYS.currentLevels, generatedLevels.value);
+    }
+  }
+);
+
+function levelComplete() {
+  currentLevel.value++;
+  pendingChanges.value++;
+  resetLevel();
+  generateLevel(game?.scene.keys.default!, currentLevel.value);
+  // setTimeout(() => {
+  //   // this.scene.restart({ level: currentLevel.value });
+  // }, 1500);
+
+  setTimeout(() => {
+    pendingChanges.value--;
+  }, 1500);
+}
+function createBrickBreaker() {
+  return new Game({
     type: AUTO,
     width: size.canvas,
     height: size.canvas,
@@ -76,8 +138,11 @@ onMounted((): void => {
           addBall.call(this, ball, index);
         });
 
-        const generatedBricks = generateBricks(20, size.canvas);
-        generatedBricks.forEach((brick, index) => {
+        // const generatedBricks = generateBricks(20, size.canvas);
+        // const level = this.physics.add.staticGroup()
+        // currentGeneratedLevel.value =
+        generateLevel(this, currentLevel.value);
+        currentGeneratedLevel.value.bricks.forEach((brick, index) => {
           addBrick.call(this, brick, index);
         });
 
@@ -103,6 +168,14 @@ onMounted((): void => {
                 if (brick.rect.body) {
                   (brick.rect.body as Phaser.Physics.Arcade.Body).destroy();
                 }
+
+                if (bricks.every((brick) => !brick.rect.active)) {
+                  levelComplete();
+                }
+                console.log({
+                  bricks,
+                  filtered: bricks.filter((brick) => brick.rect.active),
+                });
               }
             );
           });
@@ -122,6 +195,31 @@ onMounted((): void => {
       },
     },
   });
+}
+const hand = ref([] as any[]);
+function createEights() {
+  hand.value = [
+    {
+      suit: "spade",
+      value: "A",
+    },
+  ];
+}
+function createGame() {
+  console.log({ things });
+  console.log({ generatedLevel: currentGeneratedLevel.value });
+  if (things.modelValue === "brickbreaker") game = createBrickBreaker();
+  if (things.modelValue === "eights") createEights();
+}
+
+const previousLevels = ref(getItem(STORAGE_KEYS.currentLevels));
+onMounted((): void => {
+  init();
+
+  console.log({ previousLevels });
+  createGame();
+
+  levelComplete();
 });
 
 onBeforeUnmount(() => {
@@ -129,7 +227,19 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <div ref="gameContainer" class="game-container"></div>
+  <Search></Search>
+  <div v-if="loading" class="d-flex flex-fill justify-center pa-4 ma-4">
+    <div class="d-flex flex-column align-center">
+      <v-progress-circular indeterminate></v-progress-circular>
+      <div class="text-caption">generating level... take a breath</div>
+    </div>
+  </div>
+  <div v-else>
+    <div ref="gameContainer" class="game-container"></div>
+    <div v-if="things.modelValue === 'eights'">
+      {{ hand }}
+    </div>
+  </div>
 </template>
 <style scoped>
 .game-container {

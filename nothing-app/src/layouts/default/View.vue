@@ -1,9 +1,9 @@
 <template>
   <v-main class="bg-background">
     <v-container>
-      <v-row><v-col cols="12">&nbsp;</v-col></v-row>
+      <!-- <v-row><v-col cols="12">&nbsp;</v-col></v-row> -->
       <v-row class="mt-4">
-        <v-col cols="12">
+        <v-col cols="12" md="6">
           <router-view />
         </v-col>
       </v-row>

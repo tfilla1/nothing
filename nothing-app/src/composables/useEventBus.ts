@@ -17,6 +17,9 @@ export default function useEventBus() {
   function off(event: EventKeys, handler: EventHandler) {
     if (!listeners[event]) return
     listeners[event] = listeners[event].filter(h => h !== handler)
+    if (listeners[event].length === 0) {
+      delete listeners[event]
+    }
   }
 
   function emit(event: EventKeys, ...args: any[]) {

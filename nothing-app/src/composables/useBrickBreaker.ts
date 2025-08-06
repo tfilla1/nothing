@@ -74,6 +74,7 @@ export default function useBrickBreaker() {
   const paddles: GamePaddleType[] = [];
 
   function addBall(this: Phaser.Scene, ball: BallType, index: number) {
+    console.log("add ball", this)
     const circle = this.add.circle(ball.x, ball.y, ball.size, colors.ball);
     circle.setOrigin(ORIGIN_CENTER);
 
@@ -161,6 +162,10 @@ export default function useBrickBreaker() {
       ballBody.setVelocityX(-Math.abs(ballBody.velocity.x)); // bounce to the left
     }
   }
+  function resetLevel() {
+    bricks.length = 0
+  }
+
   function updatePaddle(paddle: GamePaddleType, cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined, letters: Record<"W" | "A" | "S" | "D", Phaser.Input.Keyboard.Key>) {
     paddle.body?.setVelocity(0);
 
@@ -188,6 +193,7 @@ export default function useBrickBreaker() {
     addPaddle,
     generateBricks,
     reflectBallOffPaddle,
+    resetLevel,
     updatePaddle,
   }
 }

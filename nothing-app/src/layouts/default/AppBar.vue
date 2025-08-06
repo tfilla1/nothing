@@ -16,8 +16,11 @@
       @click="() => router.push({ name })"
     ></v-btn>
     <v-divider vertical></v-divider>
-    <light-switch></light-switch>
-    <v-btn icon="$github" @click="gotoGithub"></v-btn>
+    <template #append>
+      <light-switch></light-switch>
+      <v-btn icon="$github" @click="gotoGithub"></v-btn>
+      <quick-switch></quick-switch>
+    </template>
   </v-app-bar>
 
   <Menu v-model="showMenu"></Menu>
@@ -26,6 +29,7 @@
 <script lang="ts" setup>
 //
 import LightSwitch from "@/components/light-switch.vue";
+import QuickSwitch from "@/components/quick-switch.vue";
 import Menu from "@/layouts/default/Menu.vue";
 import { ref } from "vue";
 import { RouteRecordNormalized, useRoute, useRouter } from "vue-router";
