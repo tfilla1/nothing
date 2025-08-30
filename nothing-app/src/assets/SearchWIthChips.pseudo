@@ -1,0 +1,34 @@
+def Component():
+  print('hello')
+
+Component SearchWithChips(query, chips, items, filters):
+
+    state:
+        inputValue
+        activeChips
+
+    def onInputChange(value):
+        set inputValue = value
+
+    onInputSubmit():
+        if inputValue matches "field:value" and field in filters:
+            addChip({field, value})
+            clear inputValue
+
+    addChip(chip):
+        if chip not in activeChips:
+            activeChips.append(chip)
+            notify parent (optional)
+
+    removeChip(chip):
+        activeChips.remove(chip)
+        notify parent (optional)
+
+    filterItems():
+        return items where for each chip:
+            filters[chip.field](item, chip.value) is true
+
+    render:
+        input field (value = inputValue)
+        chips (each with remove button)
+        filtered list = filterItems()
