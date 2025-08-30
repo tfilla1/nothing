@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import useEventBus, { EVENT_KEYS } from "@/composables/useEventBus";
+import useEventBus from "@/composables/useEventBus";
 import useLocalStorage, { STORAGE_KEYS } from "@/composables/useLocalStorage";
 import {
   computed,
@@ -16,37 +16,48 @@ const local = useLocalStorage();
 const pendingChanges = ref(0);
 const loading = computed(() => pendingChanges.value > 0);
 
+interface SearchProps {
+  query?: string;
+  tags?: string[];
+}
+const props = withDefaults(defineProps<SearchProps>(), {
+  query: "",
+  tags: () => [],
+});
+
 const search = reactive({
   position: {
-    x: window.innerWidth * 0.2,
-    y: window.innerHeight * 0.1,
+    x: 300,
+    y: 120,
   },
   offset: {
     x: 0,
     y: 0,
   },
   dragging: false,
-  query: "",
+  query: props.query,
 });
+
+function getClientPoint(e: MouseEvent | TouchEvent) {
+  if ("touches" in e) {
+    const t = e.touches?.[0] ?? e.changedTouches?.[0];
+    return { x: t?.clientX ?? 0, y: t?.clientY ?? 0 };
+  }
+  return { x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY };
+}
 
 function grabStart(event: MouseEvent | TouchEvent) {
   event.preventDefault();
   search.dragging = true;
 
-  const clientX =
-    "clientX" in event ? event.clientX : event.touches[0].clientX ?? 0;
-  const clientY =
-    "clientY" in event ? event.clientY : event.touches[0].clientY ?? 0;
-  search.offset.x = clientX - search.position.x;
+  const { y: clientY } = getClientPoint(event);
   search.offset.y = clientY - search.position.y;
 }
 
 function grabMove(event: MouseEvent | TouchEvent) {
   if (!search.dragging) return;
-  const clientX =
-    "clientX" in event ? event.clientX : event.touches[0].clientX ?? 0;
-  const clientY =
-    "clientY" in event ? event.clientY : event.touches[0].clientY ?? 0;
+
+  const { x: clientX, y: clientY } = getClientPoint(event);
   search.position.x = clientX - search.offset.x;
   search.position.y = clientY - search.offset.y;
 }
@@ -59,10 +70,16 @@ function grabEnd() {
   local.setItem(STORAGE_KEYS.toolbarPosition, search.position);
 }
 
+// watch(
+//   () => search.query,
+//   (val: string, old: string) => {
+//     if (val !== old) bus.emit(EVENT_KEYS.setSearch, val);
+//   }
+// );
 watch(
-  () => search.query,
-  (val: string, old: string) => {
-    if (val !== old) bus.emit(EVENT_KEYS.setSearch, val);
+  () => props.query,
+  (val) => {
+    if (val !== search.query) search.query = val ?? "";
   }
 );
 
@@ -101,6 +118,11 @@ onBeforeUnmount(() => {
       zIndex: 1000,
     }"
   >
+    <v-chip-group v-if="props.tags">
+      <v-chip v-for="(tag, index) in props.tags" :key="index">
+        {{ tag }}
+      </v-chip>
+    </v-chip-group>
     <v-text-field
       v-model="search.query"
       density="compact"

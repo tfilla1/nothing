@@ -33,11 +33,11 @@ import {
   mdiControllerClassic,
   mdiControllerClassicOutline,
   mdiDotsCircle,
+  mdiDotsHorizontal,
   mdiFacebookWorkplace,
   mdiFilter,
   mdiFlaskEmptyOutline,
   mdiGithub,
-  mdiGroup,
   mdiHome,
   mdiLightbulbNight,
   mdiLightbulbNightOutline,
@@ -46,14 +46,15 @@ import {
   mdiMagnify,
   mdiMapMarker,
   mdiMessage,
-  mdiMore,
   mdiMushroom,
   mdiMushroomOff,
   mdiMusic,
   mdiPipeDisconnected,
   mdiShopping,
   mdiSnowflakeThermometer,
+  mdiSpade,
   mdiSunglasses,
+  mdiToyBrickMarker,
   mdiTrashCan,
   mdiVolleyball,
   mdiWalk,
@@ -94,7 +95,7 @@ export default createVuetify({
       chat: mdiChat,
       connect: mdiConnection,
       disconnect: mdiPipeDisconnected,
-      group: mdiGroup,
+      group: mdiAccountGroup,
       groupOutline: mdiAccountGroupOutline,
       message: mdiMessage,
       send: mdiAirplane,
@@ -114,15 +115,18 @@ export default createVuetify({
       listOutline: mdiListBoxOutline,
 
       //games
+      brickbreaker: mdiToyBrickMarker,
+      eights: mdiSpade,
       games: mdiController,
       gamesClassic: mdiControllerClassic,
       gamesClassicOutline: mdiControllerClassicOutline,
+
 
       // music and art
       music: mdiMusic,
       mushroom: mdiMushroom,
       mushroomOff: mdiMushroomOff,
-      more: mdiMore,
+      more: mdiDotsHorizontal,
 
 
       locations: mdiMapMarker,

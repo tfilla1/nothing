@@ -41,10 +41,15 @@ const items: Ref<QuickSwitchType[]> = ref([
     onClick: () => console.log("go to notes"),
   },
   {
-    icon: "$list",
-    title: "Lists",
-    onClick: () => console.log("go to lists"),
+    icon: "$search",
+    title: "Search",
+    onClick: () => console.log("go to search"),
   },
+  // {
+  //   icon: "$list",
+  //   title: "Lists",
+  //   onClick: () => console.log("go to lists"),
+  // },
 ]);
 
 // function chunkArray(inputArray, chunkSize):
@@ -90,7 +95,7 @@ onMounted(() => {
       :key="index"
     >
       <div class="d-flex flex-column" v-for="(i, index) in items" :key="index">
-        <v-btn v-bind="i" class="me-4" size="medium" @click="i.onClick"></v-btn>
+        <v-btn v-bind="i" class="me-4" size="medium"></v-btn>
       </div>
     </div>
     <!-- <div class="d-flex flex-column">

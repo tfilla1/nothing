@@ -4,30 +4,25 @@ export const STORAGE_KEYS = {
   currentLevels: 'current-levels',
   toolbarPosition: 'toolbar-position',
   favorites: 'favorites'
-};
+} as const;
 export type StorageKeys = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];
 
-
-/**
-+ * Composable for type-safe localStorage operations
-+ * @returns Object with getItem, setItem, and removeItem methods
-+ */
 export default function useLocalStorage() {
-
   /**
    *
-   * @param key - use STORAGE_KEYS values only.
-   * @returns JSON.parsed(item) || warning
+     * @param key - use STORAGE_KEYS values only.
+     * @returns JSON.parsed(item) || warning
    */
-  const getItem = (key: StorageKeys) => {
+  const getItem = <T = unknown>(key: StorageKeys): T | null => {
     try {
       const item = localStorage.getItem(key)
-      return item ? JSON.parse(item) : null
+      return item ? JSON.parse(item) as T : null
     } catch (error) {
       console.warn(`Failed to parse localStorage item for key "${key}":`, error)
       return null
     }
   }
+
   /**
    * remove item from local storage
    * @param key - use STORAGE_KEYS values only.

@@ -9,7 +9,6 @@ import useLocalStorage, { STORAGE_KEYS } from "@/composables/useLocalStorage";
 import { AUTO, Game } from "phaser";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import games from "../../assets/games.json";
-import Search from "../../layouts/default/Search.vue";
 
 const pendingChanges = ref(0);
 const loading = computed(() => pendingChanges.value > 0);
@@ -95,14 +94,26 @@ function levelComplete() {
   currentLevel.value++;
   pendingChanges.value++;
   resetLevel();
-  generateLevel(game?.scene.keys.default!, currentLevel.value);
   // setTimeout(() => {
   //   // this.scene.restart({ level: currentLevel.value });
   // }, 1500);
 
-  setTimeout(() => {
+  const scene = game?.scene.keys.default;
+  if (!scene) {
+    console.error("scene not available fro level generation");
     pendingChanges.value--;
-  }, 1500);
+    return;
+  }
+
+  try {
+    generateLevel(scene, currentLevel.value);
+  } catch (error) {
+    console.error("Failed to generate level: ", error);
+  } finally {
+    setTimeout(() => {
+      pendingChanges.value--;
+    }, 500);
+  }
 }
 function createBrickBreaker() {
   return new Game({
@@ -142,9 +153,9 @@ function createBrickBreaker() {
         // const level = this.physics.add.staticGroup()
         // currentGeneratedLevel.value =
         generateLevel(this, currentLevel.value);
-        currentGeneratedLevel.value.bricks.forEach((brick, index) => {
-          addBrick.call(this, brick, index);
-        });
+        // currentGeneratedLevel.value.bricks.forEach((brick, index) => {
+        //   addBrick.call(this, brick, index);
+        // });
 
         paddleData.forEach((paddle: PaddleType, index: number) => {
           addPaddle.call(this, paddle, index);
@@ -208,18 +219,28 @@ function createEights() {
 function createGame() {
   console.log({ things });
   console.log({ generatedLevel: currentGeneratedLevel.value });
-  if (things.modelValue === "brickbreaker") game = createBrickBreaker();
-  if (things.modelValue === "eights") createEights();
+
+  try {
+    if (things.modelValue === "brickbreaker") game = createBrickBreaker();
+    else if (things.modelValue === "eights") createEights();
+    else console.warn("unknown game type: ", things.modelValue);
+  } catch (error) {
+    console.error("failed to create game: ", error);
+  }
 }
 
-const previousLevels = ref(getItem(STORAGE_KEYS.currentLevels));
+const previousLevels = ref(getItem(STORAGE_KEYS.currentLevels) || []);
 onMounted((): void => {
-  init();
+  try {
+    init();
 
-  console.log({ previousLevels });
-  createGame();
+    console.log({ previousLevels });
+    createGame();
 
-  levelComplete();
+    if (things.modelValue === "brickbreaker" && game) levelComplete();
+  } catch (err) {
+    console.error("failed to initialize game: ", err);
+  }
 });
 
 onBeforeUnmount(() => {
@@ -227,7 +248,6 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <Search></Search>
   <div v-if="loading" class="d-flex flex-fill justify-center pa-4 ma-4">
     <div class="d-flex flex-column align-center">
       <v-progress-circular indeterminate></v-progress-circular>

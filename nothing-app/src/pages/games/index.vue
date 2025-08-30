@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import useEventBus, { EVENT_KEYS } from "@/composables/useEventBus";
-import useFloatingSearch from "@/composables/useFloatingSearch";
+import SearchWithChips from "@/components/search-with-chips.vue";
 import useGames from "@/composables/useGames";
 import { computed, onBeforeUnmount, onMounted, Ref, ref } from "vue";
 import game from "./game.vue";
@@ -23,7 +22,7 @@ interface ThingType {
   props: any;
 }
 
-const { hide, show } = useFloatingSearch();
+// const { hide, show } = useFloatingSearch();
 const { chooseGame, getGameList, selectedGame } = useGames();
 
 const pendingChanges = ref(1);
@@ -45,22 +44,22 @@ const gameCard: Ref<CardType> = ref({
   height: 500,
 });
 
-const bus = useEventBus();
-const handler = (query: string) => (search.value = query);
+// const bus = useEventBus();
+// const handler = (query: string) => (search.value = query);
 
 onMounted(() => {
-  show();
-
+  // show();
   // listener for search:query - hand off to searchHandler
-  bus.on(EVENT_KEYS.setSearch, handler);
+  // bus.on(EVENT_KEYS.setSearch, handler);
 });
 onBeforeUnmount(() => {
-  hide();
-  bus.off(EVENT_KEYS.setSearch, handler);
+  // hide();
+  // bus.off(EVENT_KEYS.setSearch, handler);
 });
 </script>
 <template>
   <!-- {{ selectedGame }} -->
+  <SearchWithChips :items="gameList" />
   <v-card
     v-if="!selectedGame"
     v-bind="gameCard"

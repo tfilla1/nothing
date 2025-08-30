@@ -1,20 +1,30 @@
+// import { Item } from "@/classes/Item";
 import { Ref, ref } from "vue";
 
 export type GameType = "brickbreaker" | "eights" | "canvas" | "card";
 
+export interface GameItem {
+  modelValue: GameType;
+  title: string;
+  prependIcon: string;
+  props: {
+    appendIcon: string;
+    onClick: () => void;
+  };
+}
 
 export default function useGames() {
-  const gameList = [
+
+  const gameList: GameItem[] = [
     {
       modelValue: "brickbreaker",
       title: "brickbreaker",
       prependIcon: "$arrowLeft",
-      // onClick: () => (selectedGame.value = undefined),
       props: {
         appendIcon: "$arrowRight",
-        onClick: (chosenGame: GameType): any => {
+        onClick: () => {
           selectedGame.value = gameList.find(
-            (game: any) => game.modelValue === chosenGame)
+            game => game.modelValue === "brickbreaker")
         },
       },
     },
@@ -22,26 +32,21 @@ export default function useGames() {
       modelValue: "eights",
       title: "eights",
       prependIcon: "$arrowLeft",
-      // onClick: () => (selectedGame.value = undefined),
       props: {
         appendIcon: "$arrowRight",
-        onClick: (chosenGame: GameType): any => {
-          console.log({ chosenGame })
+        onClick: () => {
           selectedGame.value = gameList.find(
-            (game: any) => game.modelValue === chosenGame)
+            game => game.modelValue === "eights")
         },
       },
     },
   ]
 
-  const selectedGame: Ref<any> = ref(undefined)
-  const chooseGame = (chosenGame: string) => {
-    console.log({ chosenGame })
-    selectedGame.value = gameList.find(x => x.modelValue === chosenGame)
-  }
-  const getGameList = () => {
-    return gameList
-  }
+  const selectedGame: Ref<GameItem | undefined> = ref(undefined)
+  const byType = new Map(gameList.map(g => [g.modelValue, g] as const));
+  const chooseGame = (chosenGame: GameType) => { selectedGame.value = byType.get(chosenGame); };
+
+  const getGameList = () => gameList
 
   return {
     selectedGame,
